@@ -1,11 +1,18 @@
 
-var myGamePiece;
-var shaq;
+var myGamePiece; // player 1 aka the shaqtus
+//var shaq; // img to hold the shaqtus
+
+var ball;
+var ballImg;
 
 function startGame() {
     myGameArea.start();
-    myGamePiece = new component(30, 30, "red", 10, 120);
-    shaq = document.getElementById("shaqtus");
+    myGamePiece = new player(30, 30, "shaqtus", 10, 120);
+    
+//    shaq = document.getElementById("shaqtus");
+    ballImg = document.getElementById("balldontlie");
+    
+    ball = new ball(200, 200);
 }
 
 var myGameArea = {
@@ -23,7 +30,7 @@ var myGameArea = {
         window.addEventListener('keyup', function (e) {
             myGameArea.keys[e.keyCode] = (e.type == "keydown"); 
             // accelerate downwards
-            accelerate(.4);
+            accelerateP1(.4);
         })
     }, 
     clear : function(){
@@ -31,7 +38,54 @@ var myGameArea = {
     }
 }
 
-function component(width, height, color, x, y) {
+function ball(x, y) {
+    
+    this.gamearea = myGameArea;
+    this.width = 20;
+    this.height = 20;
+    this.speedX = 0; 
+    this.speedY = 0;
+    this.x = x;
+    this.y = y;
+    this.gravity = 0.05;
+    this.gravitySpeed = 0;
+    
+    this.bounce = 0.6;
+
+      this.update = function() {
+        ctx = myGameArea.context;
+        ctx.drawImage(ballImg, this.x, this.y);
+    }
+    this.newPos = function() {
+        this.gravitySpeed += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY + this.gravitySpeed; 
+        this.hitBottom();
+        this.hitTop();
+//        console.log(this.x + ", " + this.y);
+    }
+    this.hitBottom = function() {
+        var rockbottom = myGameArea.canvas.height - 3 * this.height;
+        if (this.y > rockbottom) {
+            this.y = rockbottom;
+            this.gravitySpeed = -(this.gravitySpeed * this.bounce);
+        }
+        
+    }
+    this.hitTop = function() {
+        var top = 5;
+        if (this.y < top) {
+            this.y = top;
+        }
+    }
+    
+}
+
+function accelerateBall(n) {
+    ball.gravity = n;
+}
+
+function player(width, height, name, x, y) {
     this.gamearea = myGameArea;
     this.width = width;
     this.height = height;
@@ -42,11 +96,11 @@ function component(width, height, color, x, y) {
     this.gravity = 0.05;
     this.gravitySpeed = 0;
     
+    var img = document.getElementById(name);
+    
     this.update = function() {
         ctx = myGameArea.context;
-//        ctx.fillStyle = color;
-//        ctx.fillRect(this.x, this.y, this.width, this.height);
-        ctx.drawImage(shaq, this.x, this.y);
+        ctx.drawImage(img, this.x, this.y);
     }
     this.newPos = function() {
         this.gravitySpeed += this.gravity;
@@ -71,7 +125,7 @@ function component(width, height, color, x, y) {
     }
 }
 
-function accelerate(n) {
+function accelerateP1(n) {
     myGamePiece.gravity = n;
 }
 
@@ -82,16 +136,11 @@ function updateGameArea() {
     myGamePiece.speedY = 0;    
     if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -10; }
     if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 10; }
-    if (myGameArea.keys && myGameArea.keys[38]) {accelerate(-.8); }
-//    if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = 10; }
-//    // space to jump
-//    if (myGameArea.keys && myGameArea.keys[32]) {
-//        
-//        // accelerate upwards ////////////for .5 seconds, then fall
-//        accelerate(-0.2);
-////        setTimeout(null, 500);
-////        accelerate(0.1);
-//    }
+    if (myGameArea.keys && myGameArea.keys[38]) {accelerateP1(-.8); }
+
     myGamePiece.newPos();    
     myGamePiece.update();
+    
+    ball.newPos();
+    ball.update();
 }
