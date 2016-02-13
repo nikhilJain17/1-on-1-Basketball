@@ -1,9 +1,11 @@
 
 var myGamePiece;
 
+
 function startGame() {
     myGameArea.start();
     myGamePiece = new component(30, 30, "red", 10, 120);
+    var westbrook = document.getElementById("westbrook");
 }
 
 var myGameArea = {
@@ -42,8 +44,9 @@ function component(width, height, color, x, y) {
     
     this.update = function() {
         ctx = myGameArea.context;
-        ctx.fillStyle = color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+//        ctx.fillStyle = color;
+//        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.drawImage(westbrook, this.x, this.y);
     }
     this.newPos = function() {
         this.gravitySpeed += this.gravity;
