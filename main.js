@@ -19,7 +19,9 @@ var myGameArea = {
             myGameArea.keys[e.keyCode] = (e.type == "keydown");
         })
         window.addEventListener('keyup', function (e) {
-            myGameArea.keys[e.keyCode] = (e.type == "keydown");            
+            myGameArea.keys[e.keyCode] = (e.type == "keydown"); 
+            // accelerate downwards
+            accelerate(0.1);
         })
     }, 
     clear : function(){
@@ -68,7 +70,7 @@ function updateGameArea() {
     myGamePiece.speedY = 0;    
     if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -10; }
     if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 10; }
-    if (myGameArea.keys && myGameArea.keys[38]) {accelerate(-0.2); }
+    if (myGameArea.keys && myGameArea.keys[38]) {accelerate(-0.5); }
 //    if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = 10; }
 //    // space to jump
 //    if (myGameArea.keys && myGameArea.keys[32]) {
