@@ -1,71 +1,83 @@
-var player1;
 
+var myGamePiece;
 
 function startGame() {
-    console.log("1 ON 1 BASKETBALL!!!!!!!!!!!!!");
     myGameArea.start();
-    player1 = new component("player1", 40, 40, "blue", 40, 40);
+    myGamePiece = new component(30, 30, "red", 10, 120);
 }
-
-
-function component(name, width, height, color, x, y) {
- 
-    this.name = name;
-    this.width = width;
-    this.height = height;
-    this.x = x;
-    this.y = y;
-    ctx = myGameArea.context;
-    ctx.fillStyle = color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-    
-     this.update = function(){
-        ctx = myGameArea.context;
-        ctx.fillStyle = color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-        
-//        if (this.x
-//        console.log(name + ": " + this.x + ", " + this.y);
-    }
-    
-}
-
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = 666;
-        this.canvas.height = 666;
+        this.canvas.width = 600;
+        this.canvas.height = 450;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.interval = setInterval(updateGameArea, 20);
-        // to move the things with keys
         window.addEventListener('keydown', function (e) {
             myGameArea.keys = (myGameArea.keys || []);
-            myGameArea.keys[e.keyCode] = true;
+            myGameArea.keys[e.keyCode] = (e.type == "keydown");
         })
         window.addEventListener('keyup', function (e) {
-            myGameArea.keys[e.keyCode] = false; 
+            myGameArea.keys[e.keyCode] = (e.type == "keydown");            
         })
-    
-    },
-    clear : function() {
+    }, 
+    clear : function(){
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
+}
+
+function component(width, height, color, x, y) {
+    this.gamearea = myGameArea;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;   
+    this.gravity = 0.05;
+    this.gravitySpeed = 0;
+    
+    this.update = function() {
+        ctx = myGameArea.context;
+        ctx.fillStyle = color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+    this.newPos = function() {
+        this.gravitySpeed += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY + this.gravitySpeed; 
+        this.hitBottom();
+    }
+    this.hitBottom = function() {
+        var rockbottom = myGameArea.canvas.height - this.height;
+        if (this.y > rockbottom) {
+            this.y = rockbottom;
+        }
+    }
+}
+
+function accelerate(n) {
+    myGamePiece.gravity = n;
 }
 
 
 function updateGameArea() {
     myGameArea.clear();
-//    player1.x;
-    
-    if (myGameArea.keys && myGameArea.keys[37]) {player1.x += -10; }
-    if (myGameArea.keys && myGameArea.keys[39]) {player1.x += 10; }
-    if (myGameArea.keys && myGameArea.keys[38]) {player1.y += -10; }
-    if (myGameArea.keys && myGameArea.keys[40]) {player1.y += 10; }
-    
-    
-    player1.update();
+    myGamePiece.speedX = 0;
+    myGamePiece.speedY = 0;    
+    if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -10; }
+    if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 10; }
+    if (myGameArea.keys && myGameArea.keys[38]) {accelerate(-0.2); }
+//    if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = 10; }
+//    // space to jump
+//    if (myGameArea.keys && myGameArea.keys[32]) {
+//        
+//        // accelerate upwards ////////////for .5 seconds, then fall
+//        accelerate(-0.2);
+////        setTimeout(null, 500);
+////        accelerate(0.1);
+//    }
+    myGamePiece.newPos();    
+    myGamePiece.update();
 }
- 
-
