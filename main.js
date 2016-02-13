@@ -21,7 +21,7 @@ var myGameArea = {
         window.addEventListener('keyup', function (e) {
             myGameArea.keys[e.keyCode] = (e.type == "keydown"); 
             // accelerate downwards
-            accelerate(0.1);
+            accelerate(.4);
         })
     }, 
     clear : function(){
@@ -34,7 +34,7 @@ function component(width, height, color, x, y) {
     this.width = width;
     this.height = height;
     this.speedX = 0;
-    this.speedY = 0;    
+    this.speedY = 0; // what the fork is this shit    
     this.x = x;
     this.y = y;   
     this.gravity = 0.05;
@@ -50,12 +50,19 @@ function component(width, height, color, x, y) {
         this.x += this.speedX;
         this.y += this.speedY + this.gravitySpeed; 
         this.hitBottom();
+        this.hitTop();
     }
     this.hitBottom = function() {
         var rockbottom = myGameArea.canvas.height - this.height;
         if (this.y > rockbottom) {
             this.y = rockbottom;
         }
+    }
+    this.hitTop = function() {
+        var top = 5;
+        if (this.y < top)
+            this.y = top;
+        
     }
 }
 
@@ -70,7 +77,7 @@ function updateGameArea() {
     myGamePiece.speedY = 0;    
     if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -10; }
     if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 10; }
-    if (myGameArea.keys && myGameArea.keys[38]) {accelerate(-0.5); }
+    if (myGameArea.keys && myGameArea.keys[38]) {accelerate(-.8); }
 //    if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = 10; }
 //    // space to jump
 //    if (myGameArea.keys && myGameArea.keys[32]) {
