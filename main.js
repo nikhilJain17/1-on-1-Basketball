@@ -1,13 +1,16 @@
 
-var myGamePiece; // player 1 aka the shaqtus
+var playerOne; // player 1 aka the shaqtus
 //var shaq; // img to hold the shaqtus
 
 var ball;
 var ballImg;
 
+var playerTwo;
+
 function startGame() {
     myGameArea.start();
-    myGamePiece = new player(30, 30, "shaqtus", 10, 120);
+    playerOne = new player(30, 30, "shaqtus", 10, 120);
+    playerTwo = new player(30, 30, "bestbrook", 300, 120);
     
 //    shaq = document.getElementById("shaqtus");
     ballImg = document.getElementById("balldontlie");
@@ -30,7 +33,8 @@ var myGameArea = {
         window.addEventListener('keyup', function (e) {
             myGameArea.keys[e.keyCode] = (e.type == "keydown"); 
             // accelerate downwards
-            accelerateP1(.4);
+//            accelerateP1(.4);
+            playerOne.accelerate(0.4);
         })
     }, 
     clear : function(){
@@ -123,23 +127,29 @@ function player(width, height, name, x, y) {
             this.y = top;
         }
     }
+    this.accelerate = function(n) {
+        this.gravity = n;   
+    }
 }
 
-function accelerateP1(n) {
-    myGamePiece.gravity = n;
-}
-
+//function accelerateP1(n) {
+//    playerOne.gravity = n;
+//}
+//
+//function accelerateP2(n) {
+//    playerTwo.gravity = n;
+//}
 
 function updateGameArea() {
     myGameArea.clear();
-    myGamePiece.speedX = 0;
-    myGamePiece.speedY = 0;    
-    if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -10; }
-    if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 10; }
-    if (myGameArea.keys && myGameArea.keys[38]) {accelerateP1(-.8); }
+    playerOne.speedX = 0;
+    playerOne.speedY = 0;    
+    if (myGameArea.keys && myGameArea.keys[37]) {playerOne.speedX = -10; }
+    if (myGameArea.keys && myGameArea.keys[39]) {playerOne.speedX = 10; }
+    if (myGameArea.keys && myGameArea.keys[38]) {playerOne.accelerate(-.8); }
 
-    myGamePiece.newPos();    
-    myGamePiece.update();
+    playerOne.newPos();    
+    playerOne.update();
     
     ball.newPos();
     ball.update();
