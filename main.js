@@ -40,9 +40,10 @@ var myGameArea = {
             myGameArea.keys[e.keyCode] = (e.type == "keydown"); 
             // accelerate downwards
 //            accelerateP1(.4);
-            if (e.keyCode == 38)
-                playerOne.accelerate(0.6);
-//          
+            if (e.keyCode == 38) {
+//                playerOne.speedY = -3;
+                playerOne.accelerate(0.4);
+            }
             else if (e.keyCode == 87)
                 playerTwo.accelerate(0.3);
             
@@ -52,6 +53,8 @@ var myGameArea = {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }
+
+// @TODO Make the ball bounce off the walls
 
 function ball(x, y) {
     
@@ -153,50 +156,43 @@ function player(width, height, name, x, y) {
     }
 }
 
-//function accelerateP1(n) {
-//    playerOne.gravity = n;
-//}
-//
-//function accelerateP2(n) {
-//    playerTwo.gravity = n;
-//}
 
 // check if either player hit ball
 // if so, move ball
 function ballCollision() {
-    
-    var p1Left = playerOne.x;
-    var p1Right = playerOne.x + playerOne.width;
-    var p1Top = playerOne.y;
-    var p1Bottom = playerOne.y + playerOne.height;
-    
-//    console.log(p1Left + " " + p1Right);
-    
-    var p2Left = playerTwo.x;
-    var p2Right = playerTwo.x + playerTwo.width;
-    var p2Top = playerTwo.y;
-    var p2Bottom = playerTwo.y + playerTwo.height;
-    
-    var ballLeft = ball.x;
-    var ballRight = ball.x + ball.width;
-    var ballTop = ball.y;
-    var ballBottom = ball.y + ball.height;
-    
+//    
+//    var p1Left = playerOne.x;
+//    var p1Right = playerOne.x + playerOne.width;
+//    var p1Top = playerOne.y;
+//    var p1Bottom = playerOne.y + playerOne.height;
+//    
+////    console.log(p1Left + " " + p1Right);
+//    
+//    var p2Left = playerTwo.x;
+//    var p2Right = playerTwo.x + playerTwo.width;
+//    var p2Top = playerTwo.y;
+//    var p2Bottom = playerTwo.y + playerTwo.height;
+//    
+//    var ballLeft = ball.x;
+//    var ballRight = ball.x + ball.width;
+//    var ballTop = ball.y;
+//    var ballBottom = ball.y + ball.height;
+//    
     // playerOne collide with ball
     if (RectCircleColliding(ball, playerOne)) {
         console.log("p1 hit ball");   
         
-        // to prevent player from overlapping with ball
+        // send the ball left and right accordingly
         if (playerOne.speedX > 0)
             ball.speedX = playerOne.speedX + 2;
         
         else
             ball.speedX = playerOne.speedX - 2;
         
-//        playerOne.speedX = 0;
-    }
+        // move ball up and down
         
-//        console.log("Ball and p1 collided");
+        
+    }
              
 }
 
@@ -205,7 +201,7 @@ function ballCollision() {
         var distX = Math.abs(circle.x - rect.x-rect.width/2);
         var distY = Math.abs(circle.y - rect.y-rect.height/2);
 
-        if (distX > (rect.width/2 + circle.height)) { return false; }
+        if (distX > (rect.width/2 + circle.width)) { return false; }
         if (distY > (rect.height/2 + circle.height)) { return false; }
 
         if (distX <= (rect.width/2)) { return true; } 
@@ -231,7 +227,10 @@ function updateGameArea() {
     // player 1 is controlled by arrows
     if (myGameArea.keys && myGameArea.keys[37]) {playerOne.speedX = -10; }
     if (myGameArea.keys && myGameArea.keys[39]) {playerOne.speedX = 10; }
-    if (myGameArea.keys && myGameArea.keys[38]) {playerOne.accelerate(-.85); }
+    if (myGameArea.keys && myGameArea.keys[38]) {
+//        playerOne.accelerate(-.85); 
+        playerOne.speedY = -20;
+    }
 
     // player 2 is controlled by w, a, d
     if (myGameArea.keys && myGameArea.keys[87]) {playerTwo.accelerate(-0.6);}
