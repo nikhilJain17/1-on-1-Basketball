@@ -65,6 +65,8 @@ function ball(x, y) {
     this.gravity = 0.05;
     this.gravitySpeed = 0;
     
+//    this.accelX = 0;
+    
     this.bounce = 0.6;
 
       this.update = function() {
@@ -73,8 +75,16 @@ function ball(x, y) {
     }
     this.newPos = function() {
         this.gravitySpeed += this.gravity;
+        
+        // decelerate
+        if (this.speedX > 0)
+            this.speedX--;
+        else if (this.speedX < 0)
+            this.speedX++;
+        
         this.x += this.speedX;
-        this.y += this.speedY + this.gravitySpeed; 
+        this.y += this.speedY + this.gravitySpeed;
+        
         this.hitBottom();
         this.hitTop();
 //        console.log(this.x + ", " + this.y);
@@ -151,6 +161,61 @@ function player(width, height, name, x, y) {
 //    playerTwo.gravity = n;
 //}
 
+// check if either player hit ball
+// if so, move ball
+function ballCollision() {
+    
+    var p1Left = playerOne.x;
+    var p1Right = playerOne.x + playerOne.width;
+    var p1Top = playerOne.y;
+    var p1Bottom = playerOne.y + playerOne.height;
+    
+//    console.log(p1Left + " " + p1Right);
+    
+    var p2Left = playerTwo.x;
+    var p2Right = playerTwo.x + playerTwo.width;
+    var p2Top = playerTwo.y;
+    var p2Bottom = playerTwo.y + playerTwo.height;
+    
+    var ballLeft = ball.x;
+    var ballRight = ball.x + ball.width;
+    var ballTop = ball.y;
+    var ballBottom = ball.y + ball.height;
+    
+    // playerOne collide with ball
+    if (RectCircleColliding(ball, playerOne)) {
+        console.log("p1 hit ball");   
+        
+        // to prevent player from overlapping with ball
+        if (playerOne.speedX > 0)
+            ball.speedX = playerOne.speedX + 2;
+        
+        else
+            ball.speedX = playerOne.speedX - 2;
+        
+//        playerOne.speedX = 0;
+    }
+        
+//        console.log("Ball and p1 collided");
+             
+}
+
+
+ function RectCircleColliding(circle,rect){
+        var distX = Math.abs(circle.x - rect.x-rect.width/2);
+        var distY = Math.abs(circle.y - rect.y-rect.height/2);
+
+        if (distX > (rect.width/2 + circle.height)) { return false; }
+        if (distY > (rect.height/2 + circle.height)) { return false; }
+
+        if (distX <= (rect.width/2)) { return true; } 
+        if (distY <= (rect.height/2)) { return true; }
+
+        var dx = distX-rect.width/2;
+        var dy = distY-rect.height/2;
+        return (dx*dx+dy*dy <= (circle.height*circle.height));
+}
+
 function updateGameArea() {
     myGameArea.clear();
     
@@ -161,6 +226,7 @@ function updateGameArea() {
     
     playerTwo.speedX = 0;
     playerTwo.speedY = 0;
+    
     
     // player 1 is controlled by arrows
     if (myGameArea.keys && myGameArea.keys[37]) {playerOne.speedX = -10; }
@@ -180,4 +246,7 @@ function updateGameArea() {
     
     ball.newPos();
     ball.update();
+    
+    ballCollision();
+    
 }
