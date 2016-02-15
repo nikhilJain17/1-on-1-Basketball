@@ -9,10 +9,10 @@ var playerTwo;
 
 function startGame() {
     myGameArea.start();
-    playerOne = new player(30, 30, "shaqtus", 10, 120);
+    playerOne = new player(30, 30, "shaqtus", 10, 400);
     console.log(playerOne.x);
     
-    playerTwo = new player(30, 30, "lebron", 400, 120);
+    playerTwo = new player(30, 30, "lebron", 400, 400);
     
 //    shaq = document.getElementById("shaqtus");
     ballImg = document.getElementById("balldontlie");
@@ -62,15 +62,15 @@ function ball(x, y) {
     this.width = 20;
     this.height = 20;
     this.speedX = 0; 
-    this.speedY = 0;
+    this.speedY = -4;
     this.x = x;
     this.y = y;
-    this.gravity = 0.05;
+    this.gravity = 0.5;
     this.gravitySpeed = 0;
     
 //    this.accelX = 0;
     
-    this.bounce = 0.6;
+    this.bounce = 0.8;
 
       this.update = function() {
         ctx = myGameArea.context;
@@ -79,11 +79,25 @@ function ball(x, y) {
     this.newPos = function() {
         this.gravitySpeed += this.gravity;
         
+        console.log(this.speedY);
+        
         // decelerate
-        if (this.speedX > 0)
+        if (this.speedX > 0) {
             this.speedX--;
-        else if (this.speedX < 0)
+        }
+        else if (this.speedX < 0) {
             this.speedX++;
+        }
+        
+        if (this.speedY > 0) {
+            this.speedY--;
+        }
+        else if (this.speedY < 0) {
+            this.speedY++;
+        }
+        
+        
+//        console.log(this.speedY);
         
         this.x += this.speedX;
         this.y += this.speedY + this.gravitySpeed;
@@ -104,6 +118,9 @@ function ball(x, y) {
         var top = 5;
         if (this.y < top) {
             this.y = top;
+//            ball.speedY = -1 * ball.speedY; // speed is 0 when it reaches top
+            ball.speedY = 10;
+//            accelerateBall(10);
         }
     }
     
@@ -190,9 +207,41 @@ function ballCollision() {
             ball.speedX = playerOne.speedX - 2;
         
         // move ball up and down
+        if (playerOne.speedY < 0) 
+            ball.speedY = -20;
         
+//        else 
+//            ball.s
         
     }
+    
+    // player 2 and ball
+    if (RectCircleColliding(ball, playerTwo)) {
+        console.log("p2 hit ball");   
+        
+        // send the ball left and right accordingly
+        if (playerTwo.speedX > 0) {
+            ball.x += 5;
+            ball.speedX = playerTwo.speedX + 2;
+        }
+        
+        else {
+            ball.x -= 5;
+            ball.speedX = playerTwo.speedX - 2;
+        }
+        
+        // move ball up and down
+        if (playerTwo.speedY < 0) 
+            ball.speedY = -20;
+        
+//        else 
+//            ball.s
+        
+    }
+    
+    
+    
+//    console.log(playerOne.speedY);
              
 }
 
@@ -233,7 +282,7 @@ function updateGameArea() {
     }
 
     // player 2 is controlled by w, a, d
-    if (myGameArea.keys && myGameArea.keys[87]) {playerTwo.accelerate(-0.6);}
+    if (myGameArea.keys && myGameArea.keys[87]) {playerTwo.speedY = -20;}
     if (myGameArea.keys && myGameArea.keys[65]) {playerTwo.speedX = -10;}
     if (myGameArea.keys && myGameArea.keys[68]) {playerTwo.speedX = 10;}
     
